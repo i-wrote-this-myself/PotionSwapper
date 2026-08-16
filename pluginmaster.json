@@ -1,0 +1,25 @@
+[
+  {
+    "Author": "i-wrote-this-myself",
+    "Name": "PotionSwapper",
+    "Punchline": "Smart hotbar icon swapping for potions",
+    "Description": "PotionSwapper, I am going into battle and need my finest potions.\n\nXIVCombo but for your potions!",
+    "Tags": [
+      "hotbar",
+      "potion",
+      "icon swap",
+      "deep dungeon"
+    ],
+    "InternalName": "PotionSwapper",
+    "RepoUrl": "https://github.com/i-wrote-this-myself/PotionSwapper",
+    "DownloadCount": 0,
+    "LastUpdate": 1786886670,
+    "DownloadLinkInstall": "https://github.com/i-wrote-this-myself/PotionSwapper/releases/latest/download/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/i-wrote-this-myself/PotionSwapper/releases/latest/download/latest.zip",
+    "AssemblyVersion": "7.55.15.32",
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": "15",
+    "Changelog": "Initial release.",
+    "IconUrl": "https://raw.githubusercontent.com/i-wrote-this-myself/PotionSwapper/main/icon.png"
+  }
+]
