@@ -15,5 +15,6 @@
     "UI",
     "Utility"
   ],
-  "IsHide": false
+  "IsHide": false,
+  "Changelog": "Initial release."
 }
