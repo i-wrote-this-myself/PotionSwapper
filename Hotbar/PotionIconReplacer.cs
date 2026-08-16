@@ -133,7 +133,13 @@ internal sealed class PotionIconReplacer : IDisposable
 
                 var bestItemId = this.FindBestPotion(originalPotion, player.MaxHp, player.MaxMp, hpPercent, mpPercent);
 
-                if (bestItemId == 0 || bestItemId == originalPotion.ItemId)
+                // 0 means nothing usable, usually because the whole potion cd is rolling.
+                // keep whatever potion is on the slot so the cd overlay shows, dont rip it back
+                // to the host potion. reverting after using one was driving me insane
+                if (bestItemId == 0)
+                    continue;
+
+                if (bestItemId == originalPotion.ItemId)
                 {
                     this.RestoreIfNeeded(slot, ref st, slotAddr);
                     this.slotState[slotAddr] = st;
