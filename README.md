@@ -19,3 +19,13 @@ Scans your hotbar every frame. If a slot holds a potion, it silently swaps it to
 - **Icon tinting** - optional, tints swapped icons so you can tell a swapped potion apart from your original setup.
 
 Everything's toggleable in the config window (`/pswap`).
+
+## How to install
+
+In the game, open Dalamud settings, go to **Experimental**, and add this to your custom plugin repositories:
+
+```
+https://i-wrote-this-myself.github.io/PotionSwapper/pluginmaster.json
+```
+
+Save, reopen the plugin installer, and PotionSwapper should show up.
