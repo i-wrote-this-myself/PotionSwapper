@@ -10,5 +10,10 @@
     "potion",
     "icon swap",
     "deep dungeon"
-  ]
+  ],
+  "CategoryTags": [
+    "UI",
+    "Utility"
+  ],
+  "IsHide": false
 }

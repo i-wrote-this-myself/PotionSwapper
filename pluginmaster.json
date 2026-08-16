@@ -10,6 +10,11 @@
       "icon swap",
       "deep dungeon"
     ],
+    "CategoryTags": [
+      "UI",
+      "Utility"
+    ],
+    "IsHide": false,
     "InternalName": "PotionSwapper",
     "RepoUrl": "https://github.com/i-wrote-this-myself/PotionSwapper",
     "DownloadCount": 0,
