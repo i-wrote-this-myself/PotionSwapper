@@ -1,0 +1,14 @@
+{
+  "Author": "i-wrote-this-myself",
+  "Name": "PotionSwapper",
+  "InternalName": "PotionSwapper",
+  "Punchline": "Smart hotbar icon swapping for potions",
+  "Description": "PotionSwapper, I am going into battle and need my finest potions.\n\nXIVCombo but for your potions!",
+  "ApplicableVersion": "any",
+  "Tags": [
+    "hotbar",
+    "potion",
+    "icon swap",
+    "deep dungeon"
+  ]
+}
