@@ -16,18 +16,9 @@ public enum DutyType
 
 internal static class TerritoryIds
 {
-    // eureka territories where the eurekan potion works (these are NOT deep dungeons)
-    internal static readonly HashSet<ushort> EurekaTerritories = new() { 789, 953 };
-
-    internal static readonly Dictionary<ushort, DutyType> TerritoryToDutyType = new()
-    {
-        { 463, DutyType.DeepDungeonPoTD },
-        { 464, DutyType.DeepDungeonPoTD },
-        { 843, DutyType.DeepDungeonHeavenOnHigh },
-        { 844, DutyType.DeepDungeonHeavenOnHigh },
-        { 789, DutyType.DeepDungeonEureka },
-        { 1073, DutyType.DeepDungeonPilgrimsTraverse },
-    };
+    // the 4 open world eureka zones, eurekan potion only works out here
+    // eureka orthos is a deep dungeon so it uses orthos potion instead, kept out on purpose
+    internal static readonly HashSet<ushort> EurekaTerritories = new() { 732, 763, 795, 827 };
 }
 
 public sealed class DutyContextTracker
@@ -48,20 +39,24 @@ public sealed class DutyContextTracker
 
     private DutyType GetDutyType()
     {
-        var territory = (ushort)Plugin.ClientState.TerritoryType;
-        if (TerritoryIds.TerritoryToDutyType.TryGetValue(territory, out var dutyType))
-            return dutyType;
         if (!this.IsInDuty)
             return DutyType.None;
 
-        // territory ids are hardcoded from xivapi, if SE adds a new dungeon this silently breaks
-        // 4=savage 5=ultimate in the cfc table, took me way too long to dig out
+        // deep dungeons are all content type 21, cfc row tells us exactly which one.
+        // beats hardcoding every floor territory id, that list was straight garbage
         var cfc = Plugin.DutyState.ContentFinderCondition;
-        if (cfc.IsValid)
+        if (!cfc.IsValid)
+            return DutyType.Regular;
+
+        if (cfc.Value.ContentType.RowId == 21)
         {
-            var row = (dynamic)(object)cfc;
-            return row.Type switch { 4 => DutyType.Savage, 5 => DutyType.Ultimate, _ => DutyType.Regular };
+            var name = cfc.Value.Name.ToString();
+            if (name.Contains("Palace of the Dead")) return DutyType.DeepDungeonPoTD;
+            if (name.Contains("Heaven")) return DutyType.DeepDungeonHeavenOnHigh;
+            if (name.Contains("Orthos")) return DutyType.DeepDungeonEureka;
+            if (name.Contains("Pilgrim")) return DutyType.DeepDungeonPilgrimsTraverse;
         }
+
         return DutyType.Regular;
     }
 }

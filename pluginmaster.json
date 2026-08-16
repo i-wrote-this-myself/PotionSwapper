@@ -26,7 +26,7 @@
     "TestingAssemblyVersion": null,
     "ApplicableVersion": "any",
     "DalamudApiLevel": "15",
-    "Changelog": "Initial release.",
+    "Changelog": "deep dungeon detection was completely broken, it was using wrong territory ids and threw an exception every single frame so nothing ever swapped in a dd. now it actually knows ur in one. eurekan potion zones corrected to the real eureka zones. potion cooldown tracking fixed.",
     "IconUrl": "https://raw.githubusercontent.com/i-wrote-this-myself/PotionSwapper/main/icon.png"
   }
 ]
