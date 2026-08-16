@@ -315,7 +315,9 @@ internal sealed class PotionIconReplacer : IDisposable
                 result.Add((p, p.GetHealForHp(maxHp)));
         }
 
-        if (isDdSlot && dutyContext.IsInDeepDungeon)
+        // enable mode folds the dd potion into the global pool, so we need it in here even when
+        // the slot started as a normal hp potion. AddDeepDungeonCandidates handles the mode checks
+        if (dutyContext.IsInDeepDungeon)
         {
             this.AddDeepDungeonCandidates(result, originalPotion, maxHp, dutyContext);
         }
