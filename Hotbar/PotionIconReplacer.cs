@@ -315,14 +315,10 @@ internal sealed class PotionIconReplacer : IDisposable
 
         if (isElixirSlot && this.configuration.ElixirMode == ElixirMode.Separate)
         {
-            // separate mode: elixir slots only see elixirs, but still apply priority setting
+            // separate mode: elixir slots only see elixirs. priority setting does nothing
+            // here since there's no hp potion competition, just pick the best elixir
             foreach (var p in PotionDatabase.GetElixirPotions())
-            {
-                var eff = p.GetHealForHp(maxHp);
-                if (this.configuration.ElixirPriority == ElixirPriority.Last)
-                    eff = Math.Max(1, eff / 10);
-                result.Add((p, eff));
-            }
+                result.Add((p, p.GetHealForHp(maxHp)));
         }
 
         // add dd potion candidates based on mode and slot type
