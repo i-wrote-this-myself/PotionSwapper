@@ -147,8 +147,16 @@ internal sealed class PotionIconReplacer : IDisposable
                 }
 
                 var commandItemId = this.PickOwnedVariant(bestItemId);
-                var changed = st.AppliedCmd != commandItemId;
-                ApplySwap(slot, commandItemId, changed);
+                bool ddTarget = PotionDatabase.TryGetPotion(bestItemId, out var targetInfo) && targetInfo.IsDeepDungeonOnly;
+
+                // dd potions are held in the restricted inventory, an item slot makes the game
+                // show count 0 and refuse to use em. lay the action down instead like dragging it on
+                var applyCmd = ddTarget ? PotionDatabase.GetActionIdForItem(bestItemId) : commandItemId;
+                var changed = st.AppliedCmd != applyCmd;
+                if (ddTarget)
+                    ApplySwapAction(slot, applyCmd, changed);
+                else
+                    ApplySwap(slot, commandItemId, changed);
 
                 if (changed)
                 {
@@ -160,7 +168,7 @@ internal sealed class PotionIconReplacer : IDisposable
                     Plugin.Log.Information($"PotionSwapper: hotbar {hb} slot {si}: {fromName} -> {toName}");
                 }
 
-                st.AppliedCmd = commandItemId;
+                st.AppliedCmd = applyCmd;
                 this.slotState[slotAddr] = st;
 
                 if (PotionDatabase.TryGetPotion(bestItemId, out var bestInfo))
@@ -195,6 +203,22 @@ internal sealed class PotionIconReplacer : IDisposable
             slot->CommandId = itemId;
             slot->ApparentActionId = itemId;
             slot->ApparentSlotType = RaptureHotbarModule.HotbarSlotType.Item;
+        }
+    }
+
+    // deep dungeon potions have to be dropped as an action slot or the game cant count or use em
+    private static unsafe void ApplySwapAction(RaptureHotbarModule.HotbarSlot* slot, uint actionId, bool changed)
+    {
+        if (changed)
+        {
+            slot->Set(RaptureHotbarModule.HotbarSlotType.Action, actionId);
+        }
+        else
+        {
+            slot->CommandType = RaptureHotbarModule.HotbarSlotType.Action;
+            slot->CommandId = actionId;
+            slot->ApparentActionId = actionId;
+            slot->ApparentSlotType = RaptureHotbarModule.HotbarSlotType.Action;
         }
     }
 
