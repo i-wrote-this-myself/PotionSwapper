@@ -286,8 +286,9 @@ internal sealed class PotionIconReplacer : IDisposable
         bool isElixirSlot = originalPotion.Category == PotionCategory.HpMpRecovery;
         bool isDdSlot = originalPotion.Category == PotionCategory.DeepDungeonHp;
 
-        bool ddSlotIncludesHpPool = !dutyContext.IsInDeepDungeon
-            || this.configuration.DeepDungeonMode == DeepDungeonPotionMode.Enable;
+        // in separate/disable modes, dd slots stay separate from regular hp potions. only
+        // enable mode lets dd slots swap into the global hp pool (when outside a dd)
+        bool ddSlotIncludesHpPool = this.configuration.DeepDungeonMode == DeepDungeonPotionMode.Enable;
 
         if (isHpSlot || (isDdSlot && ddSlotIncludesHpPool))
         {
@@ -314,15 +315,26 @@ internal sealed class PotionIconReplacer : IDisposable
 
         if (isElixirSlot && this.configuration.ElixirMode == ElixirMode.Separate)
         {
+            // separate mode: elixir slots only see elixirs, but still apply priority setting
             foreach (var p in PotionDatabase.GetElixirPotions())
-                result.Add((p, p.GetHealForHp(maxHp)));
+            {
+                var eff = p.GetHealForHp(maxHp);
+                if (this.configuration.ElixirPriority == ElixirPriority.Last)
+                    eff = Math.Max(1, eff / 10);
+                result.Add((p, eff));
+            }
         }
 
-        // enable mode folds the dd potion into the global pool, so we need it in here even when
-        // the slot started as a normal hp potion. AddDeepDungeonCandidates handles the mode checks
+        // add dd potion candidates based on mode and slot type
         if (dutyContext.IsInDeepDungeon)
         {
             this.AddDeepDungeonCandidates(result, originalPotion, maxHp, dutyContext);
+        }
+        else if (isDdSlot && this.configuration.DeepDungeonMode == DeepDungeonPotionMode.Disable)
+        {
+            // disable mode: dd slots outside a dd should not swap to hp potions either
+            // just keep the dd potion on the slot (no candidates added = no swap)
+            result.Clear();
         }
 
         return result;
@@ -330,6 +342,7 @@ internal sealed class PotionIconReplacer : IDisposable
 
     private void AddDeepDungeonCandidates(List<(PotionInfo, uint)> result, PotionInfo originalPotion, uint maxHp, DutyContextTracker dutyContext)
     {
+        // disable mode never adds dd potion candidates
         if (this.configuration.DeepDungeonMode == DeepDungeonPotionMode.Disable)
             return;
         if (!dutyContext.IsInDeepDungeon)
@@ -343,11 +356,14 @@ internal sealed class PotionIconReplacer : IDisposable
 
         if (this.configuration.DeepDungeonMode == DeepDungeonPotionMode.Enable)
         {
+            // enable mode: any hp/dd slot gets the current dd potion in a dd
             if (originalPotion.Category is PotionCategory.HpRecovery or PotionCategory.EurekaStandard or PotionCategory.DeepDungeonHp)
                 result.Add((potion, potion.GetHealForHp(maxHp)));
         }
         else if (this.configuration.DeepDungeonMode == DeepDungeonPotionMode.Separate)
         {
+            // separate mode: only dd-type slots get the current dd potion
+            // this creates a dedicated keybind that swaps to match your current dd
             if (originalPotion.IsDeepDungeonOnly)
                 result.Add((potion, potion.GetHealForHp(maxHp)));
         }
