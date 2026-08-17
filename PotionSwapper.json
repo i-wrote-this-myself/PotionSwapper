@@ -16,5 +16,6 @@
     "Utility"
   ],
   "IsHide": false,
-  "Changelog": "Initial release."
+  "Changelog": "Initial release.",
+  "IconUrl": "https://raw.githubusercontent.com/i-wrote-this-myself/PotionSwapper/main/icon.png"
 }
