@@ -20,6 +20,15 @@ public sealed class PotionCooldownTracker : IDisposable
         }
     }
 
+    // check if a specific item (like a dd potion) is on cooldown
+    public unsafe bool IsItemReady(uint itemId)
+    {
+        var am = ActionManager.Instance();
+        if (am == null)
+            return true;
+        return am->GetRecastTime(ActionType.Item, itemId) <= 0;
+    }
+
     public void Refresh() { }
     public void Reset() { }
     public void Dispose() { }

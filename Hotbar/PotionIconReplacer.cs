@@ -266,8 +266,11 @@ internal sealed class PotionIconReplacer : IDisposable
             var count = this.GetItemCount(candidate.potion.ItemId);
             if (count <= 0)
                 continue;
-            // dd potions have their own cd, regular ones all share the same cd
-            if (!candidate.potion.IsDeepDungeonOnly && !ServiceContainer.CooldownTracker.IsPotionReady)
+            // regular potions share one cd, dd potions have their own. check both
+            var isCdReady = candidate.potion.IsDeepDungeonOnly
+                ? ServiceContainer.CooldownTracker.IsItemReady(candidate.potion.ItemId)
+                : ServiceContainer.CooldownTracker.IsPotionReady;
+            if (!isCdReady)
                 continue;
             bestItemId = candidate.potion.ItemId;
             break;
