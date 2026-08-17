@@ -5,8 +5,6 @@ namespace PotionSwapper.Data;
 
 public static class PotionDatabase
 {
-    private static readonly Dictionary<uint, PotionInfo> PotionByActionId = new();
-
     private static readonly PotionInfo[] HpRecoveryPotions =
     [
         new(4551, "Potion",             PotionCategory.HpRecovery, DeepDungeonType.None, 0.05f, 250),
@@ -59,31 +57,12 @@ public static class PotionDatabase
                 dict[hqId] = p;
         }
         PotionById = dict;
-
-        // action ids are NOT item ids, the hotbar stores actions. that one bit me hard
-        var actionMappings = new (uint actionId, uint itemId)[]
-        {
-            (28, 4551), (146, 4552), (528, 4553), (887, 4554),
-            (1462, 13637), (1618, 23167), (2500, 38956), (2887, 47701),
-            (30, 4559), (148, 4560), (2501, 4563),
-            (1617, 4561),
-            (1390, 20309), (1615, 23163), (2499, 38944), (2886, 47102),
-            (1616, 22306),
-        };
-        foreach (var (actionId, itemId) in actionMappings)
-        {
-            if (dict.TryGetValue(itemId, out var info))
-                PotionByActionId[actionId] = info;
-        }
     }
 
     public static IEnumerable<PotionInfo> All => AllPotions;
 
     public static bool TryGetPotion(uint itemId, out PotionInfo potion)
         => PotionById.TryGetValue(itemId, out potion);
-
-    public static bool TryGetPotionByActionId(uint actionId, out PotionInfo potion)
-        => PotionByActionId.TryGetValue(actionId, out potion);
 
     public static IEnumerable<PotionInfo> GetStandardHpPotions()
         => AllPotions.Where(p => p.Category == PotionCategory.HpRecovery

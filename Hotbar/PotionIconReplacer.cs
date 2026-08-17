@@ -92,11 +92,10 @@ internal sealed class PotionIconReplacer : IDisposable
 
                 // the game works out the icon/tooltip/count from CommandId every frame, so rewriting
                 // that one field updates everything at once. i tried editing the icon node directly first, nightmare
-                bool isPotion = curType == RaptureHotbarModule.HotbarSlotType.Action
-                    ? PotionDatabase.TryGetPotionByActionId(curCmd, out _)
-                    : curType == RaptureHotbarModule.HotbarSlotType.Item
-                        ? PotionDatabase.TryGetPotion(curCmd, out _)
-                        : false;
+                // potions sit on the bar as item slots, action slots are real abilities. the old
+                // action lookup matched random skills like dismantle and swapped em into potions
+                bool isPotion = curType == RaptureHotbarModule.HotbarSlotType.Item
+                    && PotionDatabase.TryGetPotion(curCmd, out _);
 
                 if (!isPotion)
                 {
@@ -115,14 +114,9 @@ internal sealed class PotionIconReplacer : IDisposable
                     st = (curType, curCmd, curCmd);
                 }
 
-                bool origIsPotion;
                 PotionInfo originalPotion = default;
-                if (st.OrigType == RaptureHotbarModule.HotbarSlotType.Action)
-                    origIsPotion = PotionDatabase.TryGetPotionByActionId(st.OrigCmd, out originalPotion);
-                else if (st.OrigType == RaptureHotbarModule.HotbarSlotType.Item)
-                    origIsPotion = PotionDatabase.TryGetPotion(st.OrigCmd, out originalPotion);
-                else
-                    origIsPotion = false;
+                bool origIsPotion = st.OrigType == RaptureHotbarModule.HotbarSlotType.Item
+                    && PotionDatabase.TryGetPotion(st.OrigCmd, out originalPotion);
 
                 if (!origIsPotion || this.configuration.ExcludedItemIds.Contains(originalPotion.ItemId))
                 {
