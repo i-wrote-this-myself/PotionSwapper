@@ -17,6 +17,7 @@ public static class PotionDatabase
         new(23167, "Super-Potion",      PotionCategory.HpRecovery, DeepDungeonType.None, 0.50f, 8_000),
         new(38956, "Hyper-Potion",      PotionCategory.HpRecovery, DeepDungeonType.None, 0.60f, 12_000),
         new(47701, "Ultra-Potion",      PotionCategory.HpRecovery, DeepDungeonType.None, 0.70f, 16_000),
+        new(4561, "Dusken Draught",    PotionCategory.HpRecovery, DeepDungeonType.None, 0.50f, 5_000),
     ];
 
     private static readonly PotionInfo[] ElixirPotions =
@@ -24,11 +25,6 @@ public static class PotionDatabase
         new(4559, "Elixir",     PotionCategory.HpMpRecovery, DeepDungeonType.None, 0.05f, 250,  0.10f, 500),
         new(4560, "Hi-Elixir",  PotionCategory.HpMpRecovery, DeepDungeonType.None, 0.10f, 500,  0.20f, 1_000),
         new(4563, "Onyx Tears", PotionCategory.HpMpRecovery, DeepDungeonType.None, 0.60f, 12_000, 0.30f, 6_000),
-    ];
-
-    private static readonly PotionInfo[] SpecialPotions =
-    [
-        new(4561, "Dusken Draught", PotionCategory.HpRecovery, DeepDungeonType.None, 0.50f, 5_000),
     ];
 
     private static readonly PotionInfo[] DeepDungeonPotions =
@@ -50,7 +46,6 @@ public static class PotionDatabase
         AllPotions = new List<PotionInfo>(30);
         AllPotions.AddRange(HpRecoveryPotions);
         AllPotions.AddRange(ElixirPotions);
-        AllPotions.AddRange(SpecialPotions);
         AllPotions.AddRange(DeepDungeonPotions);
         AllPotions.Add(EurekaPotion);
 
@@ -89,16 +84,6 @@ public static class PotionDatabase
 
     public static bool TryGetPotionByActionId(uint actionId, out PotionInfo potion)
         => PotionByActionId.TryGetValue(actionId, out potion);
-
-    public static uint GetActionIdForItem(uint itemId)
-    {
-        foreach (var (actionId, info) in PotionByActionId)
-        {
-            if (info.ItemId == itemId || (itemId >= PotionInfo.HqOffset && info.ItemId == itemId - PotionInfo.HqOffset))
-                return actionId;
-        }
-        return 0;
-    }
 
     public static IEnumerable<PotionInfo> GetStandardHpPotions()
         => AllPotions.Where(p => p.Category == PotionCategory.HpRecovery
